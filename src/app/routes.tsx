@@ -7,6 +7,8 @@ import Checkout from "../pages/customer/Checkout";
 import Dashboard from "../pages/admin/Dashboard";
 import AuthGuard from "../guards/AuthGuard";
 import RoleGuard from "../guards/RoleGuard";
+import Orders from "../pages/customer/Orders";
+
 
 const routes: RouteObject[] = [
   { path: "/", element: <Home /> },
@@ -29,7 +31,19 @@ const routes: RouteObject[] = [
         </RoleGuard>
       </AuthGuard>
     )
+  },
+  {
+    path: "/orders",
+    element: (
+      <AuthGuard>
+        <Orders />
+      </AuthGuard>
+    )
   }
+
 ];
 
 export default routes;
+
+
+
