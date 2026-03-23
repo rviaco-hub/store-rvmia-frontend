@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
 import { useCartStore } from "../../store/cart.store";
+import ImageCarousel from "../../components/layout/ImageCarousel";
 
 interface Product {
   _id: string;
   name: string;
   price: number;
   description?: string;
+  images?: string[];
 }
 
 export default function Home() {
@@ -50,10 +52,7 @@ export default function Home() {
           </h1>
 
           <nav className="flex items-center gap-4 text-sm">
-            <Link
-              to="/"
-              className="hover:text-green-400 transition"
-            >
+            <Link to="/" className="hover:text-green-400 transition">
               Productos
             </Link>
             <Link
@@ -99,17 +98,15 @@ export default function Home() {
           </p>
         )}
 
-        {/* GRID DE PRODUCTOS */}
+        {/* GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map(product => (
             <div
               key={product._id}
               className="bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col"
             >
-              {/* IMAGEN PLACEHOLDER */}
-              <div className="h-40 bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                Imagen industrial
-              </div>
+              {/* 👇 CARRUSEL */}
+              <ImageCarousel images={product.images || []} />
 
               {/* INFO */}
               <div className="p-5 flex flex-col flex-1">
