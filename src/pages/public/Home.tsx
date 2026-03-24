@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import api from "../../services/api";
 import { useCartStore } from "../../store/cart.store";
 import ImageCarousel from "../../components/layout/ImageCarousel";
+import AdSlider from "../../components/layout/AdSlider";
+
 
 interface Product {
   _id: string;
@@ -12,10 +14,43 @@ interface Product {
   images?: string[];
 }
 
+const ads = [
+  {
+    id: 1,
+    image: "/3-removebg-preview.png",
+    title: "Equipos Industriales",
+    subtitle: "Alta calidad certificada",
+  },
+  {
+    id: 2,
+    image: "/4-removebg-preview.png",
+    title: "Mantenimiento Profesional",
+    subtitle: "Servicio técnico especializado",
+  },
+  {
+    id: 3,
+    image: "/logoeric2.png",
+    title: "Soluciones HVAC",
+    subtitle: "Optimización energética",
+  },
+];
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [socio, setSocio] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const addItem = useCartStore(s => s.addItem);
 
@@ -28,8 +63,8 @@ export default function Home() {
           Array.isArray(res.data)
             ? res.data
             : Array.isArray(res.data?.data)
-            ? res.data.data
-            : [];
+              ? res.data.data
+              : [];
 
         setProducts(list);
       } catch {
@@ -43,40 +78,117 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
+    <div className=" pt-24 min-h-screen bg-gray-100 text-gray-800">
       {/* HEADER */}
-      <header className="bg-gray-900 text-white">
+      <header className={`
+    fixed top-0 left-0 w-full z-50 transition-all duration-300  text-white
+    ${scrolled
+          ? "bg-gray-900/80 backdrop-blur-md shadow-lg"
+          : "bg-gray-900"
+        }
+  `}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl sm:text-2xl font-bold text-green-500">
-            RVMIA Industrial Store
-          </h1>
-
+          <img
+            src="/3-removebg-preview.png"
+            alt="Logo"
+            className="h-12
+            sm:h-14
+            md:h-16 
+            lg:h-20 
+            xl:h-24
+            w-auto 
+            object-contain 
+            select-none 
+            pointer-events-none"
+          />
           <nav className="flex items-center gap-4 text-sm">
-            <Link to="/" className="hover:text-green-400 transition">
-              Productos
+            {
+              socio ? 
+              <Link to="/Socios" className="hover:text-green-400 transition">
+              {socio}
             </Link>
+              :
+              <Link to="/Socios" className="hover:text-green-400 transition">
+              Login / registro de socio
+            </Link>
+            }
             <Link
               to="/cart"
               className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition font-semibold"
             >
-              Carrito
+              Mis productos
             </Link>
           </nav>
         </div>
       </header>
 
       {/* HERO */}
-      <section className="bg-gradient-to-r from-green-700 to-green-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-10">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-            Soluciones industriales confiables
-          </h2>
-          <p className="text-green-100 max-w-2xl">
-            Comercialización de productos y servicios industriales con enfoque
-            técnico, seguridad y escalabilidad empresarial.
-          </p>
-        </div>
-      </section>
+
+           <section className="bg-gradient-to-r from-green-700 to-green-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-14">
+
+    {/* BOTONES */}
+    <div className="flex flex-wrap justify-center items-center gap-2 w-full">
+
+      <a
+        href="tel:+576043604440"
+        className="text-xs sm:text-sm bg-white text-green-800 font-medium px-1 py-1.5 rounded-md hover:bg-gray-100 transition"
+      >
+        ☎️ Llamar
+      </a>
+
+      <a
+        href="#"
+        className="text-xs sm:text-sm bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-1.5 rounded-md transition"
+      >
+        👉 Comunidad
+      </a>
+
+      <a
+        href="https://wa.me/576043604440"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-xs sm:text-sm bg-green-800 hover:bg-green-900 text-white font-medium px-3 py-1.5 rounded-md transition"
+      >
+        💬 WhatsApp
+      </a>
+
+    
+
+      <a
+        href="https://facebook.com"
+        target="_blank"
+        className="bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition text-sm"
+      >
+        📘
+      </a>
+
+      <a
+        href="https://instagram.com"
+        target="_blank"
+        className="bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition text-sm"
+      >
+        📸
+      </a>
+
+      <a
+        href="https://linkedin.com"
+        target="_blank"
+        className="bg-white/10 hover:bg-white/20 p-1.5 rounded-full transition text-sm"
+      >
+        💼
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+      {/* SLIDER PUBLICIDAD */}
+      <div className="max-w-7xl mx-auto px-4 mt-6">
+        <AdSlider fallbackSlides={ads} />
+      </div>
+
 
       {/* CONTENIDO */}
       <main className="max-w-7xl mx-auto px-4 py-10">
