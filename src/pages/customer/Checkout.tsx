@@ -18,9 +18,12 @@ export default function Checkout() {
 
     try {
       const payload = items.map(item => ({
-        productId: item._id,     // MongoDB _id
+        productId: item._id,
         quantity: item.quantity
       }));
+
+      console.log("CK2,1. ", payload);
+      
 
       await orderService.createOrder(payload);
 
@@ -35,16 +38,16 @@ export default function Checkout() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white rounded-xl shadow p-6 text-center">
-          <p className="mb-4 text-gray-600">
-            No hay productos en el carrito
-          </p>
+      <div className="checkout-empty">
+        <div className="checkout-empty-card">
+          <h2>Tu carrito está vacío</h2>
+          <p>No hay productos listos para procesar.</p>
+
           <button
-            onClick={() => navigate("/products")}
-            className="bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg font-semibold transition"
+            onClick={() => navigate("/")}
+            className="checkout-back-btn"
           >
-            Ver productos
+            Explorar productos
           </button>
         </div>
       </div>
@@ -52,87 +55,87 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
+    <div className="checkout-page">
       {/* HEADER */}
-      <header className="bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-green-500">
-            Checkout
-          </h1>
+      <header className="checkout-header">
+        <div className="checkout-container">
+          <h1>Checkout seguro</h1>
+          <span>{items.length} productos</span>
         </div>
       </header>
 
-      {/* CONTENIDO */}
-      <main className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* LISTA */}
-          <div className="lg:col-span-2 space-y-4">
-            {items.map(item => (
-              <div
-                key={item._id}
-                className="bg-white rounded-xl shadow p-5 flex justify-between items-center"
-              >
-                <div>
-                  <h2 className="font-semibold">
-                    {item.name}
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Cantidad: {item.quantity}
-                  </p>
+      {/* CONTENT */}
+      <main className="checkout-main checkout-container">
+        {/* LISTA */}
+        <section className="checkout-items">
+          {items.map(item => (
+            <div key={item._id} className="checkout-item-card">
+              <div className="checkout-item-left">
+                <div className="checkout-product-avatar">
+                  {item.name.charAt(0)}
                 </div>
 
-                <p className="font-bold text-green-700">
-                  ${(item.price * item.quantity).toLocaleString()}
-                </p>
+                <div>
+                  <h2>{item.name}</h2>
+                  <p>Cantidad: {item.quantity}</p>
+                </div>
               </div>
-            ))}
+
+              <div className="checkout-item-price">
+                ${(item.price * item.quantity).toLocaleString()}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/* RESUMEN */}
+        <aside className="checkout-summary">
+          <h3>Resumen</h3>
+
+          <div className="summary-row">
+            <span>Subtotal</span>
+            <span>${total().toLocaleString()}</span>
           </div>
 
-          {/* RESUMEN */}
-          <div className="bg-white rounded-xl shadow p-6 h-fit">
-            <h3 className="font-semibold text-lg mb-4">
-              Resumen de compra
-            </h3>
-
-            <div className="flex justify-between text-sm mb-2">
-              <span>Subtotal</span>
-              <span>${total().toLocaleString()}</span>
-            </div>
-
-            <div className="flex justify-between text-sm mb-4">
-              <span>Impuestos</span>
-              <span>Calculado en backend</span>
-            </div>
-
-            <hr className="mb-4" />
-
-            <div className="flex justify-between font-bold text-lg mb-6">
-              <span>Total</span>
-              <span>${total().toLocaleString()}</span>
-            </div>
-
-            {error && (
-              <p className="text-sm text-red-600 mb-4">
-                {error}
-              </p>
-            )}
-
-            <button
-              onClick={handleCheckout}
-              disabled={loading}
-              className="w-full bg-green-700 hover:bg-green-800 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
-            >
-              {loading ? "Procesando..." : "Confirmar compra"}
-            </button>
+          <div className="summary-row">
+            <span>Impuestos</span>
+            <span>Backend</span>
           </div>
-        </div>
+
+          <div className="summary-row">
+            <span>Envío</span>
+            <span>Gratis</span>
+          </div>
+
+          <hr />
+
+          <div className="summary-total">
+            <span>Total</span>
+            <span>${total().toLocaleString()}</span>
+          </div>
+
+          {error && <p className="checkout-error">{error}</p>}
+
+          <button
+            onClick={handleCheckout}
+            disabled={loading}
+            className="checkout-confirm-btn"
+          >
+            {loading ? "Procesando..." : "Confirmar compra"}
+          </button>
+
+          <button
+            onClick={() => navigate("/cart")}
+            className="checkout-return-btn"
+          >
+            Volver al carrito
+          </button>
+        </aside>
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-gray-900 text-gray-400 mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-sm">
-          © {new Date().getFullYear()} RVMIA Store · Checkout Seguro
-        </div>
+      <footer className="checkout-footer">
+        © {new Date().getFullYear()} RVMIA Store · Checkout Empresarial
       </footer>
     </div>
   );

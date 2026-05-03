@@ -6,13 +6,13 @@ export interface OrderItemPayload {
 }
 
 export const orderService = {
-  // 🔹 Usado por Checkout
+  // Usado por Checkout
   createOrder: async (items: OrderItemPayload[]) => {
     const res = await api.post("/orders", { items });
     return res.data;
   },
 
-  // 🔹 Usado por historial de órdenes
+  // Usado por historial de órdenes
   getMyOrders: async () => {
     const res = await api.get("/orders/my");
     return res.data;
