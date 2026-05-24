@@ -26,6 +26,7 @@ export default function Home() {
   useEffect(()=>{
     api.get("/products").then(res=>{
       setProducts(res.data.data||res.data||[]);
+      console.log("productos",res.data);
     });
 
     const t=setInterval(()=>{

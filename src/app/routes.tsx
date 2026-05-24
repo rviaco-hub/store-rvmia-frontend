@@ -39,7 +39,7 @@ const routes: RouteObject[] = [
         <Orders />
       </AuthGuard>
     )
-  }
+  },
 
 ];
 
