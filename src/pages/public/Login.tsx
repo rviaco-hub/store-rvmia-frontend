@@ -145,7 +145,7 @@ export default function Login() {
               <>
                 ¿No tienes cuenta?
                 <button onClick={() => setMode("register")}>
-                  Regístrate
+                  Crea tu usuario
                 </button>
               </>
             ) : (
