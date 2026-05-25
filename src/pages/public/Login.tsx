@@ -4,8 +4,6 @@ import { login } from "../../services/auth.service";
 import api from "../../services/api";
 import { useAuthStore } from "../../store/auth.store";
 
-import "./Login.scss";
-
 type Mode = "login" | "register";
 
 interface AuthResponse {
@@ -48,7 +46,7 @@ export default function Login() {
         const res = await api.post<AuthResponse>("/auth/register", {
           name: name.trim(),
           email: email.trim().toLowerCase(),
-          password,
+          password
         });
         data = res.data;
       }
@@ -59,7 +57,7 @@ export default function Login() {
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          "Credenciales inválidas o error del servidor"
+        "Credenciales inválidas o error del servidor"
       );
     } finally {
       setLoading(false);
@@ -68,10 +66,10 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
+      <div className="login-container">
 
         {/* PANEL IZQUIERDO */}
-        <div className="login-brand">
+        <div className="login-left">
           <h1>RVMIA Industrial Store</h1>
 
           <p>
@@ -86,7 +84,7 @@ export default function Login() {
         </div>
 
         {/* FORMULARIO */}
-        <div className="login-form">
+        <div className="login-right">
           <h2>
             {mode === "login"
               ? "Acceso a la plataforma"
@@ -99,17 +97,19 @@ export default function Login() {
               : "Cree su cuenta para acceder al sistema"}
           </p>
 
-          {error && <div className="error-box">{error}</div>}
+          {error && (
+            <div className="error-box">
+              {error}
+            </div>
+          )}
 
-          <div className="form-fields">
-
+          <div className="form-group">
             {mode === "register" && (
               <input
                 type="text"
                 placeholder="Nombre completo"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
+                onChange={e => setName(e.target.value)}
               />
             )}
 
@@ -117,28 +117,26 @@ export default function Login() {
               type="email"
               placeholder="Correo electrónico"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
+              onChange={e => setEmail(e.target.value)}
             />
 
             <input
               type="password"
               placeholder="Contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
+              onChange={e => setPassword(e.target.value)}
             />
 
             <button
+              className="submit-btn"
               onClick={handleSubmit}
               disabled={loading}
-              className="submit-btn"
             >
               {loading
                 ? "Procesando..."
                 : mode === "login"
-                ? "Iniciar sesión"
-                : "Crear cuenta"}
+                  ? "Iniciar sesión"
+                  : "Crear cuenta"}
             </button>
           </div>
 
