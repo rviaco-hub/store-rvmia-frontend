@@ -5,36 +5,51 @@ import { useCartStore } from "../../store/cart.store";
 
 const slides = [
   {
-    image:"https://images.unsplash.com/photo-1581092918056-0c4c3acd3789",
-    title:"Marketplace Industrial Profesional",
-    subtitle:"Equipos certificados y tecnología avanzada"
+    image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789",
+    title: "Marketplace Industrial Profesional",
+    subtitle: "Equipos certificados y tecnología avanzada"
   },
   {
-    image:"https://images.unsplash.com/photo-1517048676732-d65bc937f952",
-    title:"Soluciones HVAC Empresariales",
-    subtitle:"Automatización y eficiencia energética"
+    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952",
+    title: "Soluciones HVAC Empresariales",
+    subtitle: "Automatización y eficiencia energética"
   }
 ];
 
 export default function Home() {
-  const [products,setProducts]=useState<any[]>([]);
-  const [slide,setSlide]=useState(0);
-  const [showModal,setShowModal]=useState(true);
+  const [products, setProducts] = useState<any[]>([]);
+  const [slide, setSlide] = useState(0);
+  const [showModal, setShowModal] = useState(true);
 
-  const addItem=useCartStore(s=>s.addItem);
+  const addItem = useCartStore(s => s.addItem);
 
-  useEffect(()=>{
-    api.get("/products").then(res=>{
-      setProducts(res.data.data||res.data||[]);
-      console.log("productos",res.data);
-    });
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const res = await api.get("/products");
 
-    const t=setInterval(()=>{
-      setSlide(p=>(p+1)%slides.length);
-    },5000);
+        setProducts(
+          Array.isArray(res.data?.data)
+            ? res.data.data
+            : Array.isArray(res.data)
+              ? res.data
+              : []
+        );
+      } catch (error) {
+        console.error("Error cargando productos:", error);
 
-    return ()=>clearInterval(t);
-  },[]);
+        setProducts([]);
+      }
+    };
+
+    loadProducts();
+
+    const t = setInterval(() => {
+      setSlide((p) => (p + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <>
@@ -44,7 +59,7 @@ export default function Home() {
             <h2>🔥 Promoción exclusiva</h2>
             <p>20% OFF en equipos HVAC hoy</p>
             <br />
-            <button className="btn-main" onClick={()=>setShowModal(false)}>
+            <button className="btn-main" onClick={() => setShowModal(false)}>
               Ver ofertas
             </button>
           </div>
@@ -60,9 +75,9 @@ export default function Home() {
       <main className="market-container">
 
         <section className="hero-slider">
-          {slides.map((s,i)=>(
-            <div key={i} className={`slide ${slide===i?"active":""}`}>
-              <img src={s.image}/>
+          {slides.map((s, i) => (
+            <div key={i} className={`slide ${slide === i ? "active" : ""}`}>
+              <img src={s.image} />
               <div className="overlay">
                 <div>
                   <h1>{s.title}</h1>
@@ -87,21 +102,29 @@ export default function Home() {
           <div className="promo">🔧 Soporte técnico</div>
         </section>
 
-        <h2 style={{margin:"30px 0",fontSize:"2rem"}}>
+        <h2 style={{ margin: "30px 0", fontSize: "2rem" }}>
           Productos destacados
         </h2>
 
         <section className="products-grid">
-          {products.map(product=>(
+          {products.map(product => (
             <div key={product._id} className="product-card">
-              <img src={product.images?.[0]} />
-              <div style={{padding:"20px"}}>
+              <img
+                src={
+                  product?.images?.[0] ||
+                  "/placeholder-product.png"
+                }
+              />
+              <div style={{ padding: "20px" }}>
                 <h3>{product.name}</h3>
-                <h2>${product.price.toLocaleString()}</h2>
+                <h2>
+                  $
+                  {Number(product?.price || 0).toLocaleString()}
+                </h2>
 
                 <button
                   className="btn-main"
-                  onClick={()=>addItem(product)}
+                  onClick={() => addItem(product)}
                 >
                   Agregar
                 </button>
@@ -112,7 +135,7 @@ export default function Home() {
 
         <section className="newsletter">
           <h2>Recibe promociones exclusivas</h2>
-          <input placeholder="Tu correo"/>
+          <input placeholder="Tu correo" />
         </section>
 
       </main>
